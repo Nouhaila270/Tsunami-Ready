@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agadir Tsunami-Ready — Système d'Évacuation Côtière</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="src/styles/main.css" />
+  <style>
+    /* ── Assembly Points ─────────────────────────── */
+    .assembly-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 16px;
+      padding: 20px;
+    }
+    .asm-card {
+      background: rgba(0,176,255,.06);
+      border: 1px solid rgba(0,176,255,.15);
+      border-radius: 14px;
+      padding: 20px;
+      color: #e8f4f8;
+    }
+    .asm-icon {
+      font-size: 24px;
+      color: #aa00ff;
+      margin-bottom: 8px;
+    }
+    .asm-name {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .asm-elev {
+      font-size: 12px;
+      color: #6ea8c0;
+      margin-bottom: 12px;
+      font-family: 'DM Mono', monospace;
+    }
+    .asm-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      padding: 5px 0;
+      border-bottom: 1px solid rgba(0,176,255,.08);
+      color: #aac8d8;
+    }
+    .asm-row span:last-child {
+      color: #e8f4f8;
+      font-weight: 600;
+      text-align: right;
+      max-width: 60%;
+    }
+    .asm-cap-bar { margin-top: 12px; }
+    .cap-pct {
+      font-size: 11px;
+      color: #6ea8c0;
+      margin-bottom: 4px;
+      font-family: 'DM Mono', monospace;
+    }
+    .cap-track {
+      background: rgba(255,255,255,.08);
+      border-radius: 4px;
+      height: 6px;
+      overflow: hidden;
+    }
+    .cap-fill {
+      height: 100%;
+      border-radius: 4px;
+      transition: width .5s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="tsunami-banner" class="hidden">
+    <span class="banner-icon">⚠</span>
+    <span id="banner-text">ALERTE TSUNAMI — ÉVACUEZ IMMÉDIATEMENT VERS LES ZONES EN HAUTEUR</span>
+    <span class="banner-mag" id="banner-mag"></span>
+  </div>
+
+  <div id="app">
+    <aside id="sidebar">
+      <div class="logo">
+        <div class="logo-wave">〜</div>
+        <div>
+          <div class="logo-title">TSUNAMI<strong>READY</strong></div>
+          <div class="logo-sub">Agadir · Côte Atlantique</div>
+        </div>
+      </div>
+
+      <nav id="main-nav">
+        <button class="nav-btn active" data-view="dashboard" onclick="showView('dashboard')"><span>◈</span> Dashboard</button>
+        <button class="nav-btn" data-view="map" onclick="showView('map')"><span>◉</span> Carte Évacuation</button>
+        <button class="nav-btn" data-view="sirens" onclick="showView('sirens')"><span>◎</span> Sirènes & Alertes</button>
+        <button class="nav-btn" data-view="assembly" onclick="showView('assembly')"><span>▲</span> Points de Hauteur</button>
+        <button class="nav-btn" data-view="citizens" id="btn-nav-citizens" onclick="showView('citizens')" style="display:none"><span>👥</span> Citoyens</button>
+        <button class="nav-btn" data-view="profile" id="btn-nav-profile" onclick="showView('profile')" style="display:none"><span>👤</span> Mon Profil</button>
+      </nav>
+
+      <div class="sys-status">
+        <div class="status-row"><span class="dot loading" id="dot-api"></span><span>API Sismique</span></div>
+        <div class="status-row"><span class="dot" id="dot-ws"></span><span>GPS Citoyens</span></div>
+        <div class="status-row"><span class="dot" id="dot-sirens"></span><span>Réseau Sirènes</span></div>
+      </div>
+
+      <div id="user-widget" style="margin:14px;padding:12px;border:1px solid rgba(0,176,255,.16);border-radius:12px;background:rgba(0,176,255,.05)">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+          <div id="user-avatar" style="font-size:22px">👤</div>
+          <div style="flex:1;min-width:0">
+            <div id="user-name" style="font-size:13px;font-weight:700;color:#e8f4f8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
+            <div id="user-role" style="font-size:10px;font-family:'DM Mono',monospace;color:#6ea8c0;letter-spacing:1px">—</div>
+          </div>
+          <button onclick="logout()" style="background:rgba(255,23,68,.12);border:1px solid rgba(255,23,68,.25);color:#ff6b6b;border-radius:8px;padding:6px 8px;cursor:pointer">⏻</button>
+        </div>
+        <div id="user-gps-status" style="font-size:10px;font-family:'DM Mono',monospace;color:#6ea8c0">📍 Localisation en cours…</div>
+        <div id="user-route-info" style="display:none;margin-top:8px;font-size:11px;font-family:'DM Mono',monospace;color:#e8f4f8;background:rgba(0,230,118,.08);border:1px solid rgba(0,230,118,.2);border-radius:6px;padding:6px 10px;line-height:1.5"></div>
+      </div>
+    </aside>
+
+    <main id="main">
+
+      <section id="view-dashboard" class="view active">
+        <div class="view-header">
+          <h1>Tableau de bord <span class="live-pill">LIVE</span></h1>
+          <span id="last-update" class="ts">—</span>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi kpi-ocean">
+            <div class="kpi-icon">🌊</div>
+            <div class="kpi-label">Dernière secousse marine</div>
+            <div class="kpi-value" id="kpi-mag">—</div>
+            <div class="kpi-sub" id="kpi-loc">—</div>
+          </div>
+          <div class="kpi kpi-siren">
+            <div class="kpi-icon">📢</div>
+            <div class="kpi-label">Sirènes actives</div>
+            <div class="kpi-value" id="kpi-sirens">0</div>
+            <div class="kpi-sub">Seuil ≥ 6.5</div>
+          </div>
+          <div class="kpi kpi-people">
+            <div class="kpi-icon">👥</div>
+            <div class="kpi-label">Citoyens en évacuation</div>
+            <div class="kpi-value" id="kpi-evac">0</div>
+            <div class="kpi-sub">Positions GPS actives</div>
+          </div>
+          <div class="kpi kpi-route">
+            <div class="kpi-icon">🛤</div>
+            <div class="kpi-label">Routes calculées</div>
+            <div class="kpi-value" id="kpi-routes">0</div>
+            <div class="kpi-sub">Vers points en hauteur</div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <div class="chart-label">Flux de population — évacuation</div>
+            <canvas id="chart-flux" height="160"></canvas>
+          </div>
+          <div class="chart-card">
+            <div class="chart-label">Historique secousses marines</div>
+            <canvas id="chart-seismes" height="160"></canvas>
+          </div>
+        </div>
+        <div class="section-card">
+          <div class="section-label">Points de rassemblement en hauteur — capacité</div>
+          <div id="assembly-summary" class="assembly-bar-list"></div>
+        </div>
+      </section>
+
+      <section id="view-map" class="view">
+        <div class="view-header">
+          <h1>Carte d'évacuation <span class="live-pill">LIVE</span></h1>
+          <div class="map-ctrl-bar">
+            <button class="ctrl-btn active" id="btn-citoyens" onclick="MapComp.toggleLayer('citizens')">● Citoyens</button>
+            <button class="ctrl-btn active" id="btn-routes" onclick="MapComp.toggleLayer('routes')">● Routes</button>
+            <button class="ctrl-btn active" id="btn-assembly" onclick="MapComp.toggleLayer('assembly')">▲ Hauteurs</button>
+            <button class="ctrl-btn active" id="btn-zones" onclick="MapComp.toggleLayer('danger')">⚠ Zones risque</button>
+          </div>
+        </div>
+        <div class="map-wrap">
+          <div id="map"></div>
+          <div class="map-legend">
+            <div class="leg-title">Légende</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#00e676"></span>Route rapide</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#ffab00"></span>Route risquée</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#ff1744"></span>Zone inondable</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#00b0ff"></span>Citoyen GPS</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#aa00ff"></span>Point de hauteur</div>
+            <div class="leg-row"><span class="leg-dot" style="background:#fff176"></span>Vous</div>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-sirens" class="view">
+        <div class="view-header">
+          <h1>Réseau de sirènes</h1>
+          <div>
+            <button class="action-btn danger" onclick="SirenComp.testAll()">TEST TOUTES LES SIRÈNES</button>
+            <button class="action-btn reset" onclick="SirenComp.resetAll()">Réinitialiser</button>
+          </div>
+        </div>
+        <div id="siren-grid" class="siren-grid"></div>
+      </section>
+
+      <section id="view-assembly" class="view">
+        <div class="view-header">
+          <h1>Points de rassemblement en hauteur</h1>
+        </div>
+        <div id="assembly-cards" class="assembly-grid"></div>
+      </section>
+
+      <section id="view-citizens" class="view">
+        <div class="view-header">
+          <h1>Liste des citoyens</h1>
+          <span id="citizens-count" class="ts">—</span>
+        </div>
+        <div class="section-card">
+          <div class="section-label">Citoyens enregistrés dans la base de données</div>
+          <div style="overflow:auto">
+            <table style="width:100%;border-collapse:collapse">
+              <thead>
+                <tr>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">ID</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Nom</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Email</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Téléphone</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Latitude</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Longitude</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Route d'évacuation</th>
+                  <th style="text-align:left;padding:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Statut</th>
+                </tr>
+              </thead>
+              <tbody id="citizens-table-body">
+                <tr><td colspan="8" style="padding:12px;color:#6ea8c0">Chargement…</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="view-profile" class="view">
+        <div class="view-header">
+          <h1>Mon profil</h1>
+        </div>
+        <div class="section-card">
+          <div class="section-label">Informations du citoyen connecté</div>
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px">
+            <div>
+              <div style="font-size:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Nom complet</div>
+              <div id="profile-name" style="font-size:16px;font-weight:700;color:#e8f4f8">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Email</div>
+              <div id="profile-email" style="font-size:16px;font-weight:700;color:#e8f4f8">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Téléphone</div>
+              <div id="profile-phone" style="font-size:16px;font-weight:700;color:#e8f4f8">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Rôle</div>
+              <div id="profile-role" style="font-size:16px;font-weight:700;color:#e8f4f8">citizen</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Latitude</div>
+              <div id="profile-lat" style="font-size:16px;font-weight:700;color:#e8f4f8">—</div>
+            </div>
+            <div>
+              <div style="font-size:10px;color:#6ea8c0;font-family:'DM Mono',monospace">Longitude</div>
+              <div id="profile-lng" style="font-size:16px;font-weight:700;color:#e8f4f8">—</div>
+            </div>
+          </div>
+          <div style="margin-top:16px">
+            <button class="action-btn reset" onclick="refreshCitizenProfile()">Actualiser mon profil</button>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <script src="src/utils/evacuation.js"></script>
+  <script src="src/store/state.js"></script>
+  <script src="src/services/api.js"></script>
+  <script src="src/services/websocket.js"></script>
+  <script src="src/services/auth.js"></script>
+
+  <script src="src/components/map.js"></script>
+  <script src="src/components/charts.js"></script>
+  <script src="src/components/sirens.js"></script>
+  <script src="src/components/assembly.js"></script>
+  <script src="src/components/dashboard.js"></script>
+
+  <script>
+    const TOKEN = localStorage.getItem("tsunami_token");
+    const CURRENT_USER = (() => {
+      try {
+        return JSON.parse(localStorage.getItem("tsunami_user") || "null");
+      } catch (_) {
+        return null;
+      }
+    })();
+
+    if (!TOKEN || !CURRENT_USER) {
+      window.location.href = "login.html";
+    }
+
+    function isAdmin() {
+      return CURRENT_USER && CURRENT_USER.role === "admin";
+    }
+
+    function isCitizen() {
+      return CURRENT_USER && CURRENT_USER.role === "citizen";
+    }
+
+    function logout() {
+      localStorage.removeItem("tsunami_token");
+      localStorage.removeItem("tsunami_user");
+      window.location.href = "login.html";
+    }
+
+    function setupRoleUI() {
+      const roleMap = {
+        admin: { icon: "🛡", label: "ADMIN", color: "#ffab00" },
+        citizen: { icon: "👤", label: "CITOYEN", color: "#00b0ff" }
+      };
+
+      const role = roleMap[CURRENT_USER.role] || roleMap.citizen;
+
+      document.getElementById("user-avatar").textContent = role.icon;
+      document.getElementById("user-name").textContent = CURRENT_USER.full_name || CURRENT_USER.name || CURRENT_USER.email || "—";
+      document.getElementById("user-role").textContent = role.label;
+      document.getElementById("user-role").style.color = role.color;
+
+      if (isAdmin()) {
+        document.getElementById("btn-nav-citizens").style.display = "flex";
+      }
+
+      if (isCitizen()) {
+        document.getElementById("btn-nav-profile").style.display = "flex";
+      }
+    }
+
+    function showView(name) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+      const view = document.getElementById(`view-${name}`);
+      if (view) view.classList.add('active');
+      const btn = document.querySelector(`[data-view="${name}"]`);
+      if (btn) btn.classList.add('active');
+
+      if (name === 'map') setTimeout(() => MapComp.init(), 100);
+      if (name === 'citizens' && isAdmin()) loadCitizens();
+      if (name === 'profile' && isCitizen()) refreshCitizenProfile();
+
+      // ✅ FIX : rendre les cartes assembly à chaque ouverture de la vue
+      if (name === 'assembly') {
+        AssemblyComp.renderCards(Store.get().occupancy);
+      }
+    }
+
+    function escapeHtml(s) {
+      const d = document.createElement("div");
+      d.textContent = String(s || "");
+      return d.innerHTML;
+    }
+
+    async function loadCitizens() {
+      if (!isAdmin()) return;
+
+      const tbody = document.getElementById("citizens-table-body");
+      tbody.innerHTML = `<tr><td colspan="8" style="padding:12px;color:#6ea8c0">Chargement…</td></tr>`;
+
+      try {
+        const citizens = await API.getCitizensList();
+        const activeLocations = await API.getCitizenPositions();
+
+        const locationMap = new Map();
+        activeLocations.forEach(loc => {
+          locationMap.set(Number(loc.id), loc);
+        });
+
+        const enriched = citizens.map(c => {
+          const live = locationMap.get(Number(c.user_id));
+          const latitude = live ? live.latitude : parseFloat(c.latitude);
+          const longitude = live ? live.longitude : parseFloat(c.longitude);
+
+          let routeLabel = 'Non calculée';
+          if (!isNaN(latitude) && !isNaN(longitude) && typeof EvacAlgo !== 'undefined') {
+            try {
+              const route = EvacAlgo.computeRoutes({
+                id: c.user_id,
+                latitude,
+                longitude,
+                speed_kmh: live?.speed_kmh || 0
+              });
+              routeLabel = `${route.best.name} · ${route.best.distance_km} km · ${route.best.duration_min} min`;
+            } catch (_) {}
+          }
+
+          return { ...c, latitude, longitude, routeLabel };
+        });
+
+        document.getElementById("citizens-count").textContent = `${enriched.length} citoyen(s)`;
+
+        if (!enriched.length) {
+          tbody.innerHTML = `<tr><td colspan="8" style="padding:12px;color:#6ea8c0">Aucun citoyen trouvé</td></tr>`;
+          return;
+        }
+
+        tbody.innerHTML = enriched.map(c => `
+          <tr>
+            <td style="padding:10px">${c.user_id ?? '—'}</td>
+            <td style="padding:10px">${escapeHtml(c.full_name || '—')}</td>
+            <td style="padding:10px">${escapeHtml(c.email || '—')}</td>
+            <td style="padding:10px">${escapeHtml(c.phone || '—')}</td>
+            <td style="padding:10px">${isNaN(c.latitude) ? '—' : Number(c.latitude).toFixed(6)}</td>
+            <td style="padding:10px">${isNaN(c.longitude) ? '—' : Number(c.longitude).toFixed(6)}</td>
+            <td style="padding:10px">${escapeHtml(c.routeLabel)}</td>
+            <td style="padding:10px">${c.is_active ? 'Actif' : 'Inactif'}</td>
+          </tr>
+        `).join('');
+      } catch (e) {
+        console.error(e);
+        tbody.innerHTML = `<tr><td colspan="8" style="padding:12px;color:#ff6b6b">Erreur chargement citoyens</td></tr>`;
+      }
+    }
+
+    async function refreshCitizenProfile() {
+      if (!isCitizen()) return;
+
+      const id = CURRENT_USER.user_id || CURRENT_USER.id;
+
+      document.getElementById("profile-name").textContent = CURRENT_USER.full_name || CURRENT_USER.name || "—";
+      document.getElementById("profile-email").textContent = CURRENT_USER.email || "—";
+      document.getElementById("profile-phone").textContent = CURRENT_USER.phone || "—";
+      document.getElementById("profile-role").textContent = CURRENT_USER.role || "citizen";
+      document.getElementById("profile-lat").textContent = CURRENT_USER.latitude ?? CURRENT_USER.lat ?? "—";
+      document.getElementById("profile-lng").textContent = CURRENT_USER.longitude ?? CURRENT_USER.lng ?? "—";
+
+      try {
+        const user = await API.getMyProfile(id);
+        if (!user) return;
+
+        document.getElementById("profile-name").textContent = user.full_name || "—";
+        document.getElementById("profile-email").textContent = user.email || "—";
+        document.getElementById("profile-phone").textContent = user.phone || "—";
+        document.getElementById("profile-role").textContent = user.role || "citizen";
+        document.getElementById("profile-lat").textContent = user.latitude ?? "—";
+        document.getElementById("profile-lng").textContent = user.longitude ?? "—";
+      } catch (_) {}
+    }
+
+    function updateUserRouteInfo(lat, lng) {
+      if (typeof EvacAlgo === 'undefined') return;
+
+      try {
+        const route = EvacAlgo.computeRoutes({
+          id: CURRENT_USER.user_id || CURRENT_USER.id || 'ME',
+          latitude: lat,
+          longitude: lng,
+          speed_kmh: 3
+        });
+
+        const best = route.best;
+        const risk = route.flood_risk_at_origin;
+        const riskLabel = risk >= 3 ? '🔴 Élevé' : risk >= 1 ? '🟠 Moyen' : '🟢 Faible';
+
+        const el = document.getElementById('user-route-info');
+        if (!el) return;
+
+        el.style.display = 'block';
+        el.innerHTML = `
+          🛤 <strong>${best.name}</strong><br>
+          ⏱ ${best.duration_min} min · ${best.distance_km} km<br>
+          ⚠️ Risque: ${riskLabel}
+        `;
+      } catch (e) {
+        console.error('Erreur calcul route perso', e);
+      }
+    }
+
+    function startGPS() {
+      const gpsEl = document.getElementById('user-gps-status');
+      const fallbackLat = parseFloat(CURRENT_USER.latitude || CURRENT_USER.lat || 30.4202);
+      const fallbackLng = parseFloat(CURRENT_USER.longitude || CURRENT_USER.lng || -9.5982);
+
+      updateUserRouteInfo(fallbackLat, fallbackLng);
+
+      if (!navigator.geolocation) {
+        gpsEl.textContent = `📍 ${fallbackLat.toFixed(4)}, ${fallbackLng.toFixed(4)}`;
+        return;
+      }
+
+      navigator.geolocation.watchPosition(
+        async pos => {
+          const lat = pos.coords.latitude;
+          const lng = pos.coords.longitude;
+
+          CURRENT_USER.latitude = lat;
+          CURRENT_USER.longitude = lng;
+          localStorage.setItem("tsunami_user", JSON.stringify(CURRENT_USER));
+
+          gpsEl.innerHTML = `📍 Live · ±${Math.round(pos.coords.accuracy)}m`;
+
+          updateUserRouteInfo(lat, lng);
+
+          try {
+            const result = await API.sendMyPosition(lat, lng, 0);
+            console.log("GPS envoyé :", result);
+          } catch (e) {
+            console.error("Erreur envoi GPS :", e);
+            gpsEl.textContent = "❌ Erreur envoi GPS";
+          }
+
+          if (isCitizen()) {
+            const latEl = document.getElementById("profile-lat");
+            const lngEl = document.getElementById("profile-lng");
+            if (latEl) latEl.textContent = lat.toFixed(6);
+            if (lngEl) lngEl.textContent = lng.toFixed(6);
+          }
+
+          if (isAdmin()) {
+            loadCitizens();
+          }
+        },
+        err => {
+          console.error("Erreur GPS navigateur :", err);
+          gpsEl.textContent = "❌ Autorisation GPS refusée ou indisponible";
+          updateUserRouteInfo(fallbackLat, fallbackLng);
+        },
+        { enableHighAccuracy: true, maximumAge: 10000, timeout: 15000 }
+      );
+    }
+
+    async function updateAll() {
+      const state = Store.get();
+      Dashboard.updateKPIs({
+        latestMag: state.latestMag,
+        activeSirens: state.activeSirens,
+        citizens: state.citizens,
+        routes: state.routes,
+        events: state.events
+      });
+      Charts.updateFlux(state.fluxHistory);
+      Charts.updateMag(state.events);
+      AssemblyComp.renderCards(state.occupancy);
+      AssemblyComp.renderSummaryBars(state.occupancy);
+      MapComp.updateCitizens(state.citizens, state.routes);
+    }
+
+    function handleSeismicEvent(event) {
+      Store.addEvent(event);
+
+      if (event.magnitude >= 6.5 && event.type === 'marine') {
+        SirenComp.autoActivate(event.magnitude);
+      }
+
+      if (MapComp.addSeismicMarker) {
+        MapComp.addSeismicMarker(event);
+      }
+
+      Dashboard.updateKPIs({
+        latestMag: event.magnitude,
+        activeSirens: Store.get().activeSirens,
+        citizens: Store.get().citizens,
+        routes: Store.get().routes,
+        events: Store.get().events
+      });
+
+      Charts.updateMag(Store.get().events);
+    }
+
+    async function init() {
+      setupRoleUI();
+
+      const dotApi = document.getElementById('dot-api');
+      if (dotApi) dotApi.className = 'dot loading';
+
+      const [events, sirens, citizens] = await Promise.all([
+        API.getSeismicEvents(),
+        API.getSirensStatus(),
+        API.getCitizenPositions()
+      ]);
+
+      Store.setEvents(events || []);
+      Store.setSirens(sirens || []);
+      Store.setCitizens(citizens || []);
+
+      SirenComp.render(sirens || []);
+      Charts.init();
+      updateAll();
+
+      if (dotApi) dotApi.className = 'dot ok';
+      const dotSirens = document.getElementById('dot-sirens');
+      if (dotSirens) dotSirens.className = 'dot ok';
+
+      WS.on('citizen_positions', (citizens) => {
+        Store.setCitizens(citizens);
+        updateAll();
+      });
+
+      WS.on('citizen_position', async () => {
+        const refreshed = await API.getCitizenPositions();
+        Store.setCitizens(refreshed || []);
+        updateAll();
+      });
+
+      WS.on('seismic_event', (event) => {
+        handleSeismicEvent(event);
+      });
+
+      WS.on('siren_activate', ({ siren_id, active }) => {
+        if (active) {
+          Store.activateSiren(siren_id);
+          SirenComp.updateCard(siren_id, true);
+          const kEl = document.getElementById('kpi-sirens');
+          if (kEl) kEl.textContent = Store.get().activeSirens;
+        }
+      });
+
+      WS.connect();
+      startGPS();
+
+      if (isCitizen()) {
+        refreshCitizenProfile();
+      }
+
+      if (isAdmin()) {
+        loadCitizens();
+      }
+
+      setInterval(async () => {
+        const events = await API.getSeismicEvents();
+        if (events && events.length) {
+          Store.setEvents(events);
+          Charts.updateMag(events);
+        }
+      }, 30000);
+
+      if ('Notification' in window && Notification.permission === 'default') {
+        Notification.requestPermission();
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+
+  <script src="src/components/app.js"></script>
+</body>
+</html>
