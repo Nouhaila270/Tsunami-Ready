@@ -1,0 +1,58 @@
+{
+  "events": [
+    {
+      "sensor_id": 1,
+      "magnitude": 2.10,
+      "depth_km": 12.5,
+      "latitude": 30.3800,
+      "longitude": -9.6100,
+      "duration_seconds": 8,
+      "epicenter_description": "Microséisme Baie Agadir — non ressenti"
+    },
+    {
+      "sensor_id": 3,
+      "magnitude": 3.40,
+      "depth_km": 18.0,
+      "latitude": 30.4900,
+      "longitude": -8.9200,
+      "duration_seconds": 15,
+      "epicenter_description": "Secousse légère Taroudant"
+    },
+    {
+      "sensor_id": 2,
+      "magnitude": 5.10,
+      "depth_km": 15.0,
+      "latitude": 30.5000,
+      "longitude": -9.7200,
+      "duration_seconds": 35,
+      "epicenter_description": "Séisme ressenti Agadir et Taghazout"
+    },
+    {
+      "sensor_id": 5,
+      "magnitude": 6.50,
+      "depth_km": 12.0,
+      "latitude": 30.2500,
+      "longitude": -10.0500,
+      "duration_seconds": 65,
+      "epicenter_description": "SÉISME SIGNIFICATIF — Épicentre Atlantique. Alerte tsunami activée."
+    },
+    {
+      "sensor_id": 1,
+      "magnitude": 7.20,
+      "depth_km": 7.5,
+      "latitude": 30.3100,
+      "longitude": -9.8800,
+      "duration_seconds": 90,
+      "epicenter_description": "SÉISME MAJEUR — Failles sous-marines actives. Tsunami potentiel."
+    },
+    {
+      "sensor_id": 5,
+      "magnitude": 8.30,
+      "depth_km": 5.0,
+      "latitude": 30.1800,
+      "longitude": -10.2200,
+      "duration_seconds": 120,
+      "epicenter_description": "SÉISME CATASTROPHIQUE — Atlantique nord Agadir. RISQUE TSUNAMI MAXIMAL."
+    }
+  ]
+}
