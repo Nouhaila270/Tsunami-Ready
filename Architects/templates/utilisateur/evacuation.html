@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="page-header">
+    <h1>Évacuation</h1>
+    <p>Autorisez votre position ou saisissez vos coordonnées.</p>
+</div>
+
+<div id="alert-box" class="alert-box hidden"></div>
+
+<div class="card form-card">
+    <form style="display: none;">
+        {% csrf_token %}
+    </form>
+    <div class="form-row">
+        <label for="telephone">Téléphone (optionnel)</label>
+        <input type="text" id="telephone" placeholder="06XXXXXXXX">
+    </div>
+
+    <div class="form-row">
+        <label for="latitude">Latitude</label>
+        <input type="number" step="any" id="latitude" placeholder="30.4278">
+    </div>
+
+    <div class="form-row">
+        <label for="longitude">Longitude</label>
+        <input type="number" step="any" id="longitude" placeholder="-9.5981">
+    </div>
+
+    <div class="actions">
+        <button type="button" class="btn btn-light" id="btn-geoloc">Utiliser ma position</button>
+        <button type="button" class="btn btn-primary" id="btn-calculate">Calculer l’itinéraire</button>
+    </div>
+</div>
+
+<div class="grid-two">
+    <div class="card">
+        <h3>Carte</h3>
+        <div id="map" style="width: 100%; height: 450px;"></div>
+    </div>
+
+    <div class="card">
+        <h3>Résultat</h3>
+        <div id="result">
+            <p>Aucun itinéraire calculé.</p>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/evacuation.js' %}"></script>
+<script>
+console.log("isSecureContext =", window.isSecureContext);
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key|default:'' }}&callback=initEvacuationMap"></script>
+{% endblock %}

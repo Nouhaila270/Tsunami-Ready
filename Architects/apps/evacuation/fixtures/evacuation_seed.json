@@ -1,0 +1,38 @@
+[
+  {
+    "model": "evacuation.refuge",
+    "pk": 1,
+    "fields": {
+      "nom": "Refuge Kasbah Oufella",
+      "latitude": 30.4279,
+      "longitude": -9.5939,
+      "altitude": 236.0,
+      "capacite_max": 1500,
+      "zone_hors_eau": true
+    }
+  },
+  {
+    "model": "evacuation.refuge",
+    "pk": 2,
+    "fields": {
+      "nom": "Refuge Agadir Oufella Plateau",
+      "latitude": 30.4305,
+      "longitude": -9.5902,
+      "altitude": 210.0,
+      "capacite_max": 1200,
+      "zone_hors_eau": true
+    }
+  },
+  {
+    "model": "evacuation.refuge",
+    "pk": 3,
+    "fields": {
+      "nom": "Refuge Quartier Talborjt Haut",
+      "latitude": 30.4247,
+      "longitude": -9.5808,
+      "altitude": 35.0,
+      "capacite_max": 900,
+      "zone_hors_eau": true
+    }
+  }
+]

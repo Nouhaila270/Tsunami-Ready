@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Agadir Tsunami Ready</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-inner">
+            <a href="/" class="brand">Agadir Tsunami Ready</a>
+            <div class="nav-links">
+                <a href="/">Accueil</a>
+                <a href="/prevention/">Prévention</a>
+                <a href="/evacuation/">Évacuation</a>
+                {% if request.user.is_authenticated %}
+                    <a href="/dashboard/">Dashboard</a>
+                   <form method="post" action="{% url 'logout' %}" class="logout-form">
+    {% csrf_token %}
+    <button type="submit" class="nav-link-btn">Logout</button>
+</form>
+                {% else %}
+                    <a href="{% url 'login' %}">Login</a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

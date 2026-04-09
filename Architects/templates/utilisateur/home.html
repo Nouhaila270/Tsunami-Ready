@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="hero">
+    <h1>Système d’évacuation tsunami - Agadir</h1>
+    <p>
+        Accédez rapidement à l’itinéraire d’évacuation vers le refuge sécurisé le plus proche.
+    </p>
+    <div class="actions">
+        <a class="btn btn-primary" href="/evacuation/">Commencer l’évacuation</a>
+        <a class="btn btn-light" href="/prevention/">Conseils de prévention</a>
+    </div>
+</section>
+
+<section class="card-grid">
+    <div class="card">
+        <h3>Alerte rapide</h3>
+        <p>Déclenchement automatique des alertes en cas de séisme marin supérieur à 6.5.</p>
+    </div>
+    <div class="card">
+        <h3>Refuges sécurisés</h3>
+        <p>Sélection du refuge le plus proche situé en zone hors d’eau et en altitude.</p>
+    </div>
+    <div class="card">
+        <h3>Usage hors-ligne</h3>
+        <p>Téléchargez le fichier GPX de votre itinéraire pour le garder sur votre appareil.</p>
+    </div>
+</section>
+{% endblock %}

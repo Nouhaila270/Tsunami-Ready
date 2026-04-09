@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="card login-card">
+    <h1>Connexion Admin</h1>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Se connecter</button>
+    </form>
+</div>
+{% endblock %}

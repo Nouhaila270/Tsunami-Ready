@@ -1,0 +1,36 @@
+[
+  {
+    "model": "alertes.sirene",
+    "pk": 1,
+    "fields": {
+      "emplacement": "Corniche Agadir",
+      "latitude": 30.4175,
+      "longitude": -9.6032,
+      "statut": "inactif"
+    }
+  },
+  {
+    "model": "alertes.sirene",
+    "pk": 2,
+    "fields": {
+      "emplacement": "Port d'Agadir",
+      "latitude": 30.4320,
+      "longitude": -9.6215,
+      "statut": "inactif"
+    }
+  },
+  {
+    "model": "alertes.alerte",
+    "pk": 1,
+    "fields": {
+      "date": "2026-03-20T09:00:00Z",
+      "magnitude": 6.8,
+      "epicentre": "Atlantique",
+      "latitude": 30.1000,
+      "longitude": -10.2000,
+      "en_mer": true,
+      "declenchement": "exercice",
+      "active": true
+    }
+  }
+]

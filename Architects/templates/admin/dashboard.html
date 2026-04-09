@@ -1,0 +1,112 @@
+{% extends "base.html" %}
+{% load static %}
+{% csrf_token %}
+
+{% block content %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+{% endblock %}
+
+<div class="page-header">
+    <h1>Dashboard Admin</h1>
+</div>
+
+<div class="stats-grid">
+    <div class="card"><h3>Positions</h3><p>{{ positions_json|length }}</p></div>
+    <div class="card" onclick="openPopup()"><h3>Refuges</h3><p>{{ refuges_json|length }}</p></div>
+    <div class="card" onclick="openPopup1()"><h3>Sirènes</h3><p>{{ sirenes_json|length }}</p></div>
+    <div class="card"><h3>Alertes</h3><p>{{ alertes_json|length }}</p></div>
+</div>
+
+<div id="popup">
+    <div>
+        <h3>Les Refuges</h3>
+        <ul id="refugeList"></ul>
+        <br>
+        <button onclick="closePopup()">Fermer</button>
+    </div>
+</div>
+
+<div id="popup1">
+    <div>
+        <h3>Les Sirènes</h3>
+        <ul id="sireneList"></ul>
+        <br>
+        <button onclick="closePopup1()">Fermer</button>
+    </div>
+</div>
+
+<button onclick="openModal()">+ Ajouter Refuge/Sirène</button><br><br>
+
+<div id="modal">
+    <div>
+        <h3>Ajouter Refuge/Sirène</h3>
+        <select id="typeSelect">
+            <option value="refuge">Refuge</option>
+            <option value="sirene">Sirène</option>
+        </select><br><br>
+
+        <div id="refugeInputs">
+            <input type="text" id="refugeName" placeholder="Nom du refuge"><br><br>
+            <input type="number" step="any" id="refugeLat" placeholder="Latitude"><br><br>
+            <input type="number" step="any" id="refugeLon" placeholder="Longitude"><br><br>
+            <input type="number" step="any" id="refugeAlt" placeholder="Altitude"><br><br>
+            <input type="number" step="1" id="refugeCap" placeholder="Capacité maximale"><br><br>
+        </div>
+
+        <div id="sireneInputs" style="display:none;">
+            <input type="text" id="sireneEmplacement" placeholder="Emplacement"><br><br>
+            <input type="number" step="any" id="sireneLat" placeholder="Latitude"><br><br>
+            <input type="number" step="any" id="sireneLon" placeholder="Longitude"><br><br>
+            <input type="hidden" id="sireneStatut" value="inactif">
+        </div>
+
+        <input type="hidden" id="add-refuge-url" value="{% url 'admin_dashboard:add_refuge' %}">
+        <input type="hidden" id="add-sirene-url" value="{% url 'admin_dashboard:add_sirene' %}">
+
+        <button id="submitModal">Soumettre</button>
+        <button onclick="closeModal()">Fermer</button>
+    </div>
+</div>
+
+<div class="card">
+    <h3>Carte des flux</h3>
+    <div id="dashboard-map"></div>
+</div>
+
+<div class="card">
+    <h3>Dernières alertes</h3>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Magnitude</th>
+                <th>Epicentre</th>
+                <th>Active</th>
+                <th>Déclenchement</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for a in alertes_json %}
+            <tr>
+                <td>{{ a.id }}</td>
+                <td>{{ a.magnitude }}</td>
+                <td>{{ a.epicentre }}</td>
+                <td>{{ a.active }}</td>
+                <td>{{ a.declenchement }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{{ positions_json|json_script:"positions-data" }}
+{{ refuges_json|json_script:"refuges-data" }}
+{{ sirenes_json|json_script:"sirenes-data" }}
+
+<script src="{% static 'js/dashboard-crud.js' %}"></script>
+<script src="{% static 'js/dashboard.js' %}"></script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initDashboardMap"></script>
+
+{% endblock %}

@@ -1,0 +1,21 @@
+[
+  {
+    "model": "utilisateurs.utilisateur",
+    "pk": 1,
+    "fields": {
+      "telephone": "0600000001",
+      "date_inscr": "2026-03-20T10:00:00Z"
+    }
+  },
+  {
+    "model": "utilisateurs.historiqueposition",
+    "pk": 1,
+    "fields": {
+      "utilisateur": 1,
+      "timestamp": "2026-03-20T10:05:00Z",
+      "latitude": 30.4210,
+      "longitude": -9.6010,
+      "en_evacuation": true
+    }
+  }
+]
