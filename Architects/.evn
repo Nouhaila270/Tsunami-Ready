@@ -1,0 +1,14 @@
+# ── Django ─────────────────────────
+SECRET_KEY='django-insecure-1g3ptfe=mj70x%_@aca+wihnls@(^s)(v-bj)o3^k8_mb$g+1-'
+DEBUG=False
+
+# ── Base de données ────────────────
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=tsunami_ready_db
+DB_USER=tsunami_admin
+DB_PASSWORD=mot_de_passe_fort
+
+# ── Sécurité ───────────────────────
+SEISMIC_HMAC_SECRET=cle_hmac_secrete
+FIELD_ENCRYPTION_KEY=cle_aes256_secrete

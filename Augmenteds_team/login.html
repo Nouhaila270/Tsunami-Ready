@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <script>
+  if (location.protocol !== 'https:' && location.hostname !== 'localhost' && location.hostname !== '127.0.0.1') {
+      location.replace(`https://${location.host}${location.pathname}${location.search}`);
+  }
+</script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TsunamiReady — Connexion</title>
+  <style>
+    :root {
+      --deep:#001f2e;
+      --wave:#00b0ff;
+      --safe:#00e676;
+      --alert:#ff1744;
+      --text:#e8f4f8;
+      --muted:#6ea8c0;
+    }
+
+    * { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(160deg, #001a2c, #003050, #001a2c);
+      color: var(--text);
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:20px;
+    }
+
+    .wrap {
+      width:100%;
+      max-width:920px;
+      min-height:560px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      border-radius:20px;
+      overflow:hidden;
+      box-shadow:0 0 50px rgba(0,176,255,.15);
+      background: rgba(0,20,35,.96);
+    }
+
+    .brand {
+      background: linear-gradient(160deg, rgba(0,176,255,.12), rgba(0,230,118,.05));
+      padding:40px;
+      display:flex;
+      flex-direction:column;
+      justify-content:space-between;
+      border-right:1px solid rgba(0,176,255,.12);
+    }
+
+    .logo-title {
+      font-size:28px;
+      font-weight:800;
+      letter-spacing:3px;
+      text-transform:uppercase;
+      margin-bottom:8px;
+    }
+
+    .logo-title strong { color: var(--wave); }
+
+    .logo-sub {
+      font-size:13px;
+      color: var(--muted);
+      line-height:1.6;
+    }
+
+    .stats {
+      display:flex;
+      flex-direction:column;
+      gap:14px;
+      margin-top:24px;
+    }
+
+    .stat {
+      padding:14px 16px;
+      border:1px solid rgba(0,176,255,.1);
+      background: rgba(0,176,255,.05);
+      border-radius:12px;
+    }
+
+    .stat-label {
+      font-size:12px;
+      color: var(--muted);
+      margin-bottom:4px;
+    }
+
+    .stat-val {
+      font-size:18px;
+      font-weight:700;
+    }
+
+    .panel {
+      padding:42px 34px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+
+    .title {
+      font-size:28px;
+      font-weight:800;
+      margin-bottom:8px;
+      text-transform:uppercase;
+      letter-spacing:2px;
+    }
+
+    .subtitle {
+      color: var(--muted);
+      font-size:13px;
+      margin-bottom:22px;
+    }
+
+    .field {
+      margin-bottom:14px;
+    }
+
+    .field label {
+      display:block;
+      margin-bottom:6px;
+      font-size:12px;
+      color: var(--muted);
+    }
+
+    .field input {
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid rgba(0,176,255,.18);
+      background: rgba(0,176,255,.06);
+      color: var(--text);
+      outline:none;
+    }
+
+    .field input:focus {
+      border-color: var(--wave);
+    }
+
+    .gps-row {
+      display:grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap:10px;
+      align-items:end;
+    }
+
+    .gps-btn {
+      padding:12px 14px;
+      border:none;
+      border-radius:10px;
+      cursor:pointer;
+      background: rgba(0,176,255,.14);
+      color: var(--wave);
+      font-weight:700;
+    }
+
+    .gps-status {
+      font-size:12px;
+      color: var(--muted);
+      margin-top:6px;
+      margin-bottom:10px;
+    }
+
+    .btn {
+      width:100%;
+      padding:14px;
+      border:none;
+      border-radius:10px;
+      background: linear-gradient(90deg, var(--wave), #0077cc);
+      color:#fff;
+      font-weight:800;
+      font-size:15px;
+      cursor:pointer;
+      margin-top:6px;
+    }
+
+    .errmsg {
+      display:none;
+      background: rgba(255,23,68,.12);
+      border:1px solid rgba(255,23,68,.32);
+      color:#ff7f96;
+      padding:10px 12px;
+      border-radius:10px;
+      margin-bottom:14px;
+      font-size:13px;
+    }
+
+    .successmsg {
+      display:none;
+      background: rgba(0,230,118,.12);
+      border:1px solid rgba(0,230,118,.32);
+      color:#7dffb0;
+      padding:10px 12px;
+      border-radius:10px;
+      margin-bottom:14px;
+      font-size:13px;
+    }
+
+    .switch {
+      margin-top:16px;
+      text-align:center;
+      font-size:13px;
+      color: var(--muted);
+    }
+
+    .switch a {
+      color: var(--wave);
+      text-decoration:none;
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    #register-form { display:none; }
+
+    @media (max-width: 760px) {
+      .wrap {
+        grid-template-columns: 1fr;
+      }
+      .brand {
+        display:none;
+      }
+      .gps-row {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="wrap">
+    <div class="brand">
+      <div>
+        <div class="logo-title">TSUNAMI<strong>READY</strong></div>
+        <div class="logo-sub">
+          Plateforme d’alerte et d’évacuation côtière.<br>
+          Connexion sécurisée pour administrateurs et citoyens.
+        </div>
+
+        <div class="stats">
+          <div class="stat">
+            <div class="stat-label">Rôle administrateur</div>
+            <div class="stat-val">Gestion des citoyens + alertes</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Rôle citoyen</div>
+            <div class="stat-val">Profil + GPS + route + alertes</div>
+          </div>
+          <div class="stat">
+            <div class="stat-label">Authentification</div>
+            <div class="stat-val">Node.js + auth_sessions</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="font-size:12px;color:var(--muted)">
+        Agadir · Souss-Massa · Système d’évacuation
+      </div>
+    </div>
+
+    <div class="panel">
+      <div id="login-form">
+        <div class="title">Connexion</div>
+        <div class="subtitle">Connectez-vous avec votre compte admin ou citizen</div>
+
+        <div class="errmsg" id="login-error"></div>
+        <div class="successmsg" id="login-success"></div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="login-email" placeholder="admin@agadir.ma" />
+        </div>
+
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" id="login-password" placeholder="••••••••" />
+        </div>
+
+        <button class="btn" onclick="doLogin()">SE CONNECTER</button>
+
+        <div class="switch">
+          Pas encore de compte ?
+          <a onclick="showRegister()">S'inscrire</a>
+        </div>
+      </div>
+
+      <div id="register-form">
+        <div class="title">Inscription</div>
+        <div class="subtitle">Créer un nouveau compte citizen</div>
+
+        <div class="errmsg" id="register-error"></div>
+        <div class="successmsg" id="register-success"></div>
+
+        <div class="field">
+          <label>Nom d'utilisateur</label>
+          <input type="text" id="reg-username" placeholder="citizen01" />
+        </div>
+
+        <div class="field">
+          <label>Nom complet</label>
+          <input type="text" id="reg-fullname" placeholder="Mohammed Alaoui" />
+        </div>
+
+        <div class="field">
+          <label>Email</label>
+          <input type="email" id="reg-email" placeholder="citizen@agadir.ma" />
+        </div>
+
+        <div class="field">
+          <label>Téléphone</label>
+          <input type="text" id="reg-phone" placeholder="+212600000000" />
+        </div>
+
+        <div class="field">
+          <label>Mot de passe</label>
+          <input type="password" id="reg-password" placeholder="minimum 6 caractères" />
+        </div>
+
+        <div class="field">
+          <label>Localisation</label>
+          <div class="gps-row">
+            <input type="text" id="reg-latitude" placeholder="Latitude" />
+            <input type="text" id="reg-longitude" placeholder="Longitude" />
+            <button type="button" class="gps-btn" onclick="getGPS()">GPS</button>
+          </div>
+          <div class="gps-status" id="gps-status">Position par défaut : 30.420200 / -9.598200</div>
+        </div>
+
+        <button class="btn" onclick="doRegister()">S'INSCRIRE</button>
+
+        <div class="switch">
+          Déjà inscrit ?
+          <a onclick="showLogin()">Connexion</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = 'https://localhost:3001';
+
+    function showLogin() {
+      document.getElementById('register-form').style.display = 'none';
+      document.getElementById('login-form').style.display = 'block';
+      clearMessages();
+    }
+
+    function showRegister() {
+      document.getElementById('login-form').style.display = 'none';
+      document.getElementById('register-form').style.display = 'block';
+      clearMessages();
+    }
+
+    function clearMessages() {
+      ['login-error', 'login-success', 'register-error', 'register-success'].forEach(id => {
+        const el = document.getElementById(id);
+        el.style.display = 'none';
+        el.textContent = '';
+      });
+    }
+
+    function showError(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function showSuccess(id, msg) {
+      const el = document.getElementById(id);
+      el.textContent = msg;
+      el.style.display = 'block';
+    }
+
+    function getGPS() {
+      const status = document.getElementById('gps-status');
+
+      if (!navigator.geolocation) {
+        status.textContent = 'Géolocalisation non supportée.';
+        return;
+      }
+
+      status.textContent = 'Récupération de la position…';
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          document.getElementById('reg-latitude').value = pos.coords.latitude.toFixed(6);
+          document.getElementById('reg-longitude').value = pos.coords.longitude.toFixed(6);
+          status.textContent = `Position détectée : ${pos.coords.latitude.toFixed(6)} / ${pos.coords.longitude.toFixed(6)}`;
+        },
+        () => {
+          status.textContent = 'Impossible de récupérer la position.';
+        },
+        { enableHighAccuracy: true, timeout: 10000 }
+      );
+    }
+
+    async function doRegister() {
+      clearMessages();
+
+      const payload = {
+        username: document.getElementById('reg-username').value.trim(),
+        full_name: document.getElementById('reg-fullname').value.trim(),
+        email: document.getElementById('reg-email').value.trim(),
+        phone: document.getElementById('reg-phone').value.trim(),
+        password: document.getElementById('reg-password').value,
+        latitude: document.getElementById('reg-latitude').value || 30.420200,
+        longitude: document.getElementById('reg-longitude').value || -9.598200
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/register`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError('register-error', data.message || data.error || 'Erreur inscription');
+          return;
+        }
+
+        localStorage.setItem('tsunami_token', data.token || '');
+        localStorage.setItem('tsunami_user', JSON.stringify(data.user || {}));
+
+        showSuccess('register-success', 'Inscription réussie...');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 700);
+      } catch (e) {
+        showError('register-error', 'Erreur serveur ou API indisponible');
+      }
+    }
+
+    async function doLogin() {
+      clearMessages();
+
+      const payload = {
+        email: document.getElementById('login-email').value.trim(),
+        password: document.getElementById('login-password').value
+      };
+
+      try {
+        const res = await fetch(`${API_BASE}/api/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          showError('login-error', data.message || data.error || 'Erreur connexion');
+          return;
+        }
+
+        localStorage.setItem('tsunami_token', data.token || '');
+        localStorage.setItem('tsunami_user', JSON.stringify(data.user || {}));
+
+        showSuccess('login-success', 'Connexion réussie...');
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 700);
+      } catch (e) {
+        showError('login-error', 'Erreur serveur ou API indisponible');
+      }
+    }
+  </script>
+</body>
+</html>

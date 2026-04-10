@@ -1,0 +1,17 @@
+ENV PATH = c:\Users\VIET\projet bd\-Tsunami-Ready\Augmenteds_team\.env
+TWILIO SID = MISSING
+TWILIO TOKEN = MISSING
+TWILIO FROM = MISSING
+❌ MySQL connexion échouée: 
+
+🌊 TsunamiReady Server — Port 3001
+API : https://localhost:3001/api
+WS  : ws://localhost:3001/ws
+
+── Comptes ─────────────────────────────
+admin@agadir.ma   / admin2024!
+citizen@agadir.ma / citizen2024!
+
+── WhatsApp ────────────────────────────
+Twilio configuré: NON
+^C

@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+
+# SQLite
+db.sqlite3
+
+# Environment variables
+.env
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv/
+
+# Conda
+conda-meta/
+python_env/
+envs/
+
+# VS Code
+.vscode/
+
+# OS files
+.DS_Store
+Thumbs.db
+.codegpt

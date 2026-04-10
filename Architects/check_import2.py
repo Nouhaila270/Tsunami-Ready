@@ -1,0 +1,1 @@
+from encrypted_model_fields.fields import EncryptedCharField 

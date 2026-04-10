@@ -1,0 +1,16 @@
+# ⚠️ SÉCURITÉ — Ne jamais committer ces fichiers
+membre2-alerts/.env
+membre2-alerts/firebase-key.json
+membre2-alerts/node_modules/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+venv/
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+Z
