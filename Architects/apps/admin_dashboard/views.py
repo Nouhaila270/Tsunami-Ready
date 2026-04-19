@@ -40,10 +40,12 @@ def dashboard(request):
 
 
 
+# ================= ADD =================
 @login_required
 @require_POST
 def add_refuge(request):
     data = json.loads(request.body)
+
     refuge = Refuge.objects.create(
         nom=data["nom"],
         latitude=data["latitude"],
@@ -51,6 +53,7 @@ def add_refuge(request):
         altitude=data.get("altitude"),
         capacite_max=data.get("capacite_max"),
     )
+
     return JsonResponse({
         "id": refuge.id,
         "nom": refuge.nom,
@@ -65,12 +68,14 @@ def add_refuge(request):
 @require_POST
 def add_sirene(request):
     data = json.loads(request.body)
+
     sirene = Sirene.objects.create(
         emplacement=data["emplacement"],
         latitude=data["latitude"],
         longitude=data["longitude"],
         statut="inactif",
     )
+
     return JsonResponse({
         "id": sirene.id,
         "emplacement": sirene.emplacement,
@@ -79,11 +84,14 @@ def add_sirene(request):
         "statut": sirene.statut,
     })
 
+
+# ================= DELETE =================
 @login_required
 @require_POST
 def delete_refuge(request, refuge_id):
     Refuge.objects.filter(id=refuge_id).delete()
     return JsonResponse({"success": True})
+
 
 @login_required
 @require_POST
@@ -91,17 +99,21 @@ def delete_sirene(request, sirene_id):
     Sirene.objects.filter(id=sirene_id).delete()
     return JsonResponse({"success": True})
 
+
+# ================= EDIT =================
 @login_required
 @require_POST
 def edit_refuge(request, refuge_id):
     data = json.loads(request.body)
-    Refuge.objects.filter(id=refuge_id).update(
-        nom=data["nom"],
-        latitude=data["latitude"],
-        longitude=data["longitude"],
-        altitude=data.get("altitude"),
-        capacite_max=data.get("capacite_max"),
-    )
+    refuge = Refuge.objects.get(id=refuge_id)
+
+    refuge.nom = data["nom"]
+    refuge.latitude = data["latitude"]
+    refuge.longitude = data["longitude"]
+    refuge.altitude = data.get("altitude")
+    refuge.capacite_max = data.get("capacite_max")
+    refuge.save()
+
     return JsonResponse({"success": True})
 
 
@@ -109,10 +121,12 @@ def edit_refuge(request, refuge_id):
 @require_POST
 def edit_sirene(request, sirene_id):
     data = json.loads(request.body)
-    Sirene.objects.filter(id=sirene_id).update(
-        emplacement=data["emplacement"],
-        latitude=data["latitude"],
-        longitude=data["longitude"],
-        statut=data["statut"],
-    )
+    sirene = Sirene.objects.get(id=sirene_id)
+
+    sirene.emplacement = data["emplacement"]
+    sirene.latitude = data["latitude"]
+    sirene.longitude = data["longitude"]
+    sirene.statut = data["statut"]
+    sirene.save()
+
     return JsonResponse({"success": True})

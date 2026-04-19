@@ -29,6 +29,13 @@ function openPopup() {
             refuges.splice(index, 1);
             document.getElementById("refuges-data").textContent = JSON.stringify(refuges);
             document.querySelectorAll(".card p")[1].textContent = refuges.length;
+            if (window.refugeData) {
+                const globalIndex = refugeData.findIndex(item => item.id === r.id);
+                if (globalIndex > -1) refugeData.splice(globalIndex, 1);
+                refreshMap();
+            } else {
+                removeRefugeMarker(r.id);
+            }
             openPopup();
         });
 
@@ -62,6 +69,19 @@ function openPopup() {
                 r.capacite_max = newCap ? parseInt(newCap) : null;
 
                 document.getElementById("refuges-data").textContent = JSON.stringify(refuges);
+                if (window.refugeData) {
+                    const globalItem = refugeData.find(item => item.id === r.id);
+                    if (globalItem) {
+                        globalItem.nom = r.nom;
+                        globalItem.latitude = r.latitude;
+                        globalItem.longitude = r.longitude;
+                        globalItem.altitude = r.altitude;
+                        globalItem.capacite_max = r.capacite_max;
+                    }
+                    refreshMap();
+                } else {
+                    updateRefugeMarker(r);
+                }
                 openPopup();
             }
         });
@@ -104,6 +124,13 @@ function openPopup1() {
                 sirenes.splice(indexToRemove, 1);
                 document.getElementById("sirenes-data").textContent = JSON.stringify(sirenes);
                 document.querySelectorAll(".card p")[2].textContent = sirenes.length;
+                if (window.sireneData) {
+                    const globalIndex = sireneData.findIndex(item => item.id === s.id);
+                    if (globalIndex > -1) sireneData.splice(globalIndex, 1);
+                    refreshMap();
+                } else {
+                    removeSireneMarker(s.id);
+                }
                 openPopup1();
             }
         });
@@ -135,6 +162,18 @@ function openPopup1() {
                 s.statut = newStatut;
 
                 document.getElementById("sirenes-data").textContent = JSON.stringify(sirenes);
+                if (window.sireneData) {
+                    const globalItem = sireneData.find(item => item.id === s.id);
+                    if (globalItem) {
+                        globalItem.emplacement = s.emplacement;
+                        globalItem.latitude = s.latitude;
+                        globalItem.longitude = s.longitude;
+                        globalItem.statut = s.statut;
+                    }
+                    refreshMap();
+                } else {
+                    updateSireneMarker(s);
+                }
                 openPopup1();
             }
         });
@@ -225,11 +264,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 refuges.push(newItem);
                 document.getElementById("refuges-data").textContent = JSON.stringify(refuges);
                 document.querySelectorAll(".card p")[1].textContent = refuges.length;
+                if (window.refugeData) {
+                    refugeData.push(newItem);
+                    refreshMap();
+                }
             } else {
                 const sirenes = JSON.parse(document.getElementById("sirenes-data").textContent);
                 sirenes.push(newItem);
                 document.getElementById("sirenes-data").textContent = JSON.stringify(sirenes);
                 document.querySelectorAll(".card p")[2].textContent = sirenes.length;
+                if (window.sireneData) {
+                    sireneData.push(newItem);
+                    refreshMap();
+                }
             }
 
             alert(`${type === "refuge" ? "Refuge" : "Sirène"} ajouté(e) avec succès !`);

@@ -62,8 +62,8 @@
             <input type="hidden" id="sireneStatut" value="inactif">
         </div>
 
-        <input type="hidden" id="add-refuge-url" value="{% url 'admin_dashboard:add_refuge' %}">
-        <input type="hidden" id="add-sirene-url" value="{% url 'admin_dashboard:add_sirene' %}">
+        <input type="hidden" id="add-refuge-url" value="{% url 'admin_dashboard:add-refuge' %}">
+        <input type="hidden" id="add-sirene-url" value="{% url 'admin_dashboard:add-sirene' %}">
 
         <button id="submitModal">Soumettre</button>
         <button onclick="closeModal()">Fermer</button>
@@ -72,7 +72,7 @@
 
 <div class="card">
     <h3>Carte des flux</h3>
-    <div id="dashboard-map"></div>
+    <div id="dashboard-map" style="height:500px;"></div>
 </div>
 
 <div class="card">
@@ -107,6 +107,7 @@
 
 <script src="{% static 'js/dashboard-crud.js' %}"></script>
 <script src="{% static 'js/dashboard.js' %}"></script>
+
 <script async defer src="https://maps.googleapis.com/maps/api/js?key={{ google_maps_api_key }}&callback=initDashboardMap"></script>
 
 {% endblock %}

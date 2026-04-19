@@ -14,7 +14,7 @@ def refuges_geojson(request):
             },
             "geometry": {
                 "type": "Point",
-                "coordinates": [refuge.longitude, refuge.latitude]
+                "coordinates": [float(refuge.longitude), float(refuge.latitude)]
             }
         })
     return JsonResponse({
