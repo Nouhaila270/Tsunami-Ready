@@ -2,6 +2,10 @@ Blue Team:
       ABELLAH M’RAK
       IKRAM MOURABIT
 
+QA Engineers:
+     Najy Omar
+     Aya Negry
+     
 Architects :
       LAMRANI ALAOUI Houda,
       Latlassi Abdelmaoula,
