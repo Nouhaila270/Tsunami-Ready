@@ -7,7 +7,7 @@ Architects :
       Latlassi Abdelmaoula,
       MAZZINE Omar
       
-**Équipe Augmented :**  
+**Équipe Augmenteds :**  
 - MERIZAK Yousra  
 - MEZOUARA Hassna  
 - MOUHADDAB Oumaima
