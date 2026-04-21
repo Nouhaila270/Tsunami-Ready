@@ -4,7 +4,9 @@
 > Plateforme temps réel de détection sismique, d'alerte tsunami et de coordination d'évacuation pour la ville d'Agadir.
 
 ---
+## 🎥 Demo vidéo
 
+👉 [▶️ Voir la démo complète du système TsunamiReady](https://drive.google.com/file/d/1T2hmv80XkQ6TNmzpsZC0p1LUXU2fj7SC/view?usp=sharing)
 ## 📸 Aperçu
 
 | Dashboard | Sirènes | Carte | Points de Hauteur |
