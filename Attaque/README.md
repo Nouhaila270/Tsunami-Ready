@@ -12,7 +12,7 @@
 ---
 
 > **Document Classification : CONFIDENTIAL — RESTRICTED**
-> Ce dossier contient les résultats de l'évaluation de sécurité Red Team réalisée dans le cadre du **SIBD Projet 2025-2026** — ENSIAS Taroudant (Pr. Sara El-Ateif).
+> Ce dossier contient les résultats de l'évaluation de sécurité Red Team réalisée dans le cadre du **SIBD Projet 2025-2026** — ENSIASD Taroudant (Pr. Sara El-Ateif).
 
 ---
 
@@ -309,7 +309,7 @@ def current_alert(request):
 ---
 # Rapport Red Team — Agadir Tsunami-Ready
 
-**Projet SIBD 2025-2026 — ENSIAS Taroudant**
+**Projet SIBD 2025-2026 — ENSIASD Taroudant**
 Encadrant : Pr. Sara El-Ateif
 
 ---
@@ -331,8 +331,8 @@ Encadrant : Pr. Sara El-Ateif
 
 | Nom | Rôle |
 |---|---|
-| *(à compléter)* | Red Team — Attaque & Exploitation |
-| *(à compléter)* | Red Team — Analyse & Rapport |
+| Mohhi Aya | Red Team — Attaque & Exploitation |
+| Miftah Nouhaila | Red Team — Analyse & Rapport |
 
 ---
 
@@ -561,5 +561,5 @@ L'enchaînement des vulnérabilités identifiées permet à un attaquant non aut
 
 ---
 
-*SIBD Projet 2025-2026 — ENSIAS Taroudant — Pr. Sara El-Ateif*
+*SIBD Projet 2025-2026 — ENSIASD Taroudant — Pr. Sara El-Ateif*
 *Évaluation réalisée le 13 Avril 2026*
