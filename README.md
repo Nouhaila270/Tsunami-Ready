@@ -1,6 +1,6 @@
 **Red Team :**
-      - Mohhi Aya
-      - Miftah Nouhaila
+- MOHHI AYA
+- MIFTAH NOUHAILA
       
 Blue Team:
       ABELLAH M’RAK
