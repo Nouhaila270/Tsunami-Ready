@@ -307,74 +307,259 @@ def current_alert(request):
 | **grep / tree** | — | Analyse statique code source |
 
 ---
+# Rapport Red Team — Agadir Tsunami-Ready
 
-## 📊 Score CVSS
+**Projet SIBD 2025-2026 — ENSIAS Taroudant**
+Encadrant : Pr. Sara El-Ateif
+
+---
+
+## Informations générales
+
+| Champ | Détail |
+|---|---|
+| Projet | Agadir Tsunami-Ready — Système d'alerte et d'évacuation tsunami |
+| Type d'évaluation | Test d'intrusion Red Team (Black-box / Grey-box) |
+| Méthodologie | OWASP Top 10 (2021) + PTES |
+| Date d'évaluation | 13 Avril 2026 |
+| Score de risque global | 8.5 / 10 — HIGH TO CRITICAL |
+| Verdict | NOT PRODUCTION READY |
+
+---
+
+## Membres de l'équipe
+
+| Nom | Rôle |
+|---|---|
+| *(à compléter)* | Red Team — Attaque & Exploitation |
+| *(à compléter)* | Red Team — Analyse & Rapport |
+
+---
+
+## Contexte
+
+Dans le cadre du projet SIBD 2025-2026, notre équipe a été chargée de réaliser l'évaluation de sécurité (Red Team) du système **Agadir Tsunami-Ready**, développé par les équipes Architects et Augmenteds. Ce système est une plateforme critique de gestion des alertes tsunami et des routes d'évacuation pour la région Agadir / Souss-Massa.
+
+L'objectif était d'identifier les vulnérabilités exploitables avant tout déploiement, en simulant le comportement d'un attaquant réel. Les tests ont été conduits sur un environnement Kali Linux, sur les deux implémentations du système.
+
+---
+
+## Environnement de test
+
+| Application | Technologie | Port |
+|---|---|---|
+| App Architects | Django 5.2 + SQLite | 8000 |
+| App Augmenteds (API) | Node.js 22 + MySQL | 3001 |
+| App Augmenteds (Flask) | Flask + MySQL | 5000 |
+| App Augmenteds (Frontend) | HTML / JS statique | 8080 |
+
+### Outils utilisés
+
+| Outil | Utilisation |
+|---|---|
+| curl | Tests manuels des endpoints sans authentification |
+| OWASP ZAP 2.17.0 | Scan automatisé — 12 alertes détectées |
+| Apache Bench (ab) | Test de charge DoS (1000 requêtes, 100 concurrentes) |
+| Burp Suite 2026.4 | Interception et analyse du trafic HTTP |
+| Bash Scripts | Flood parallèle 100 requêtes POST |
+| grep / tree | Analyse statique du code source |
+
+---
+
+## Vulnérabilités identifiées
+
+### VULN-001 — Broken Access Control `[CRITIQUE]`
+
+**Endpoint :** `GET /api/sirens/status` (Port 3001)
+
+**Description :**
+L'endpoint `/api/sirens/status` est accessible sans aucune authentification. N'importe quel visiteur anonyme obtient la liste complète des sirènes d'alerte : identifiant, nom, zone géographique, coordonnées GPS et statut d'activation.
+
+**Commande exécutée :**
+```bash
+curl -X GET http://localhost:3001/api/sirens/status
+```
+
+**Réponse obtenue :**
+```json
+{
+  "count": 4,
+  "sirens": [
+    {"id": "S1", "name": "Sirène Port", "zone": "Zone Portuaire",
+     "altitude_m": 5, "lat": 30.425, "lng": -9.621, "active": false},
+    {"id": "S2", "name": "Sirène Plage Agadir", "zone": "Front de Mer",
+     "altitude_m": 3, "lat": 30.418, "lng": -9.615, "active": false},
+    {"id": "S3", "name": "Sirène Anza", "zone": "Anza",
+     "altitude_m": 8, "lat": 30.455, "lng": -9.645, "active": false},
+    {"id": "S4", "name": "Sirène Taghazout", "zone": "Taghazout",
+     "altitude_m": 10, "lat": 30.543, "lng": -9.709, "active": false}
+  ]
+}
+```
+
+**Impact :** Cartographie complète de l'infrastructure d'alerte divulguée publiquement. Un attaquant connaît la position GPS de chaque sirène et son état opérationnel sans s'authentifier.
+
+**Remédiation :** Protéger l'endpoint avec un middleware JWT. Appliquer le RBAC : seuls les rôles `ADMIN` et `OPERATOR` accèdent aux données des sirènes. Retourner HTTP 401 pour toute requête sans token valide.
+
+---
+
+### VULN-002 — Accès aux données sensibles & Man-in-the-Middle `[CRITIQUE]`
+
+**Endpoints :** `/api/sirens/status`, `/alerts` (Port 3001)
+
+**Description :**
+Les communications entre le frontend et le backend transitent en HTTP non chiffré. Un attaquant en position réseau peut intercepter et modifier les signaux d'alerte en transit. Le test Man-in-the-Middle réalisé avec Burp Suite a démontré la faisabilité de modifier la magnitude d'un séisme avant qu'elle atteigne le serveur.
+
+**Commande exécutée :**
+```bash
+curl -X GET http://localhost:3001/api/sirens/status
+# Retourne coordonnées GPS et statuts de toutes les sirènes sans authentification
+# MitM : interception via Burp Suite — modification des données en transit
+```
+
+**Impact :** Un attaquant peut modifier un niveau d'alerte de 4.0 à 8.5 en transit, déclenchant une évacuation injustifiée, ou supprimer une vraie alerte tsunami avant traitement.
+
+**Remédiation :** Déployer HTTPS avec un certificat TLS valide sur tous les services. Configurer HSTS. Ajouter une signature HMAC sur les messages capteurs pour garantir l'intégrité des données en transit.
+
+---
+
+### VULN-003 — CORS Wildcard / Security Misconfiguration `[HIGH]`
+
+**Détecté par :** OWASP ZAP 2.17.0 sur `http://localhost:8080`
+
+**Description :**
+La configuration `Access-Control-Allow-Origin: *` autorise n'importe quel site web externe à effectuer des requêtes vers l'API. Le scan ZAP a détecté 12 alertes au total.
+
+**Commande exécutée :**
+```bash
+zaproxy &
+# URL : http://localhost:8080 — Automated Scan → Attack
+# Résultat : 12 alertes (5 Medium, 4 Low, 3 Info)
+```
+
+**Alertes détectées par ZAP :**
+
+| Alerte | Sévérité |
+|---|---|
+| Cross-Domain Misconfiguration (7 occurrences) | Medium |
+| CSP Header Not Set | Medium |
+| Missing Anti-clickjacking Header (3) | Medium |
+| Server Leaks Information via X-Powered-By | Low |
+| X-Content-Type-Options Header Missing | Low |
+| Sub Resource Integrity Attribute Missing | Low |
+| Timestamp Disclosure — Unix (2) | Info |
+
+**Impact :** CSRF facilité depuis un site malveillant. Absence de protection contre le clickjacking. La stack technique est révélée via le header `X-Powered-By`.
+
+**Remédiation :** Restreindre CORS aux origines légitimes. Configurer `Content-Security-Policy`, `X-Frame-Options: DENY` et `X-Content-Type-Options: nosniff`. Supprimer le header `X-Powered-By`.
+
+---
+
+### VULN-004 — Absence de Rate Limiting / DoS `[HIGH]`
+
+**Endpoints :** `/alerts`, `/api/sirens/status`, `/events` (Ports 3001, 5000, 8000)
+
+**Description :**
+Aucun mécanisme de limitation de débit n'est implémenté sur les endpoints critiques. Un flood de 100 requêtes POST parallèles est accepté sans blocage. Le test Apache Bench confirme que 984 requêtes sur 1000 aboutissent sans aucune restriction.
+
+**Commandes exécutées :**
+```bash
+# Test Apache Bench — App Architects
+ab -n 1000 -c 100 http://127.0.0.1:8000/alertes/current/
+
+# Flood bash — App Augmenteds
+for i in {1..100}; do
+  curl -X POST http://localhost:3001/alerts \
+    -H "Content-Type: application/json" \
+    -d "{\"niveau\":9.5,\"zone\":\"Test$i\",\"message\":\"DoS RED TEAM\"}" -s -o /dev/null &
+done
+wait
+```
+
+**Mesure de la dégradation :**
+
+| Moment | Temps de réponse |
+|---|---|
+| Avant flood | 0.01s |
+| Pendant flood | 0.03s (saturation connexions) |
+
+**Impact :** Le serveur devient inaccessible aux citoyens précisément pendant une alerte réelle. Injection de centaines de faux événements sismiques possible en parallèle.
+
+**Remédiation :** Intégrer `express-rate-limit` sur Node.js (60 req/min par IP). Utiliser `django-ratelimit` sur Django. Déployer NGINX comme reverse proxy avec `limit_req_zone`. Retourner HTTP 429 avec header `Retry-After`.
+
+---
+
+## Chaîne d'attaque complète
+
+L'enchaînement des vulnérabilités identifiées permet à un attaquant non authentifié de compromettre entièrement le système selon le scénario suivant.
+
+**Étape 1 — Reconnaissance :** Analyse du code source public sur GitHub. Identification de tous les endpoints, ports et mécanismes d'authentification via grep sur les fichiers JS et Python.
+
+**Étape 2 — Cartographie des sirènes :** Interrogation de `/api/sirens/status` sans token. Obtention de la position GPS et du statut de chaque sirène d'alerte de la côte d'Agadir.
+
+**Étape 3 — Interception Man-in-the-Middle :** En l'absence de HTTPS, interception du trafic via Burp Suite. Modification des niveaux d'alerte en transit avant traitement côté serveur.
+
+**Étape 4 — Injection de fausses alertes :** POST sur `/alerts` avec un niveau 9.8. Insertion d'une fausse alerte critique dans le système sans vérification de source.
+
+**Étape 5 — Attaque DoS :** Flood de 100 requêtes parallèles qui saturent le serveur. Le système devient inaccessible aux citoyens au moment le plus critique.
+
+**Étape 6 — Exploitation CSRF :** Un site malveillant exploite le CORS wildcard pour effectuer des actions en nom d'un administrateur connecté, incluant la désactivation de sirènes.
+
+**Étape 7 — Impact final :** Lors d'un séisme réel, les alertes légitimes ne passent plus, les sirènes sont désactivées, les citoyens ne peuvent pas accéder au système d'évacuation.
+
+---
+
+## Tableau récapitulatif OWASP
+
+| ID | OWASP | Vulnérabilité | CWE | Sévérité |
+|---|---|---|---|---|
+| VULN-001 | A01:2021 | Broken Access Control — sirènes | CWE-284 | CRITIQUE |
+| VULN-002 | A01:2021 | Broken Access Control — MitM | CWE-284 | CRITIQUE |
+| VULN-003 | A05:2021 | CORS Wildcard / Security Misconfiguration | CWE-942 | HIGH |
+| VULN-004 | A04/A05:2021 | Absence de Rate Limiting — DoS | CWE-770 | HIGH |
+
+---
+
+## Score de risque CVSS v3.1
 
 | Métrique | Valeur | Vecteur |
-|----------|--------|---------|
-| Attack Vector | Network | `AV:N` |
-| Attack Complexity | Low | `AC:L` |
-| Privileges Required | None | `PR:N` |
-| User Interaction | None | `UI:N` |
-| Scope | Changed | `S:C` |
-| Confidentiality Impact | **High** | `C:H` |
-| Integrity Impact | **High** | `I:H` |
-| Availability Impact | **High** | `A:H` |
+|---|---|---|
+| Attack Vector | Network | AV:N |
+| Attack Complexity | Low | AC:L |
+| Privileges Required | None | PR:N |
+| User Interaction | None | UI:N |
+| Scope | Changed | S:C |
+| Confidentiality Impact | High | C:H |
+| Integrity Impact | High | I:H |
+| Availability Impact | High | A:H |
 
-> ### 🔴 Score CVSS Agrégé : **8.5 / 10 — HIGH TO CRITICAL**
-
----
-
-## 🔧 Recommandations
-
-### Priorité 1 — CRITIQUE (à corriger immédiatement)
-
-- [ ] **JWT sur tous les endpoints** — implémenter `verifyToken` middleware sur Node.js et Flask-JWT-Extended sur Flask
-- [ ] **HTTPS obligatoire** — déployer TLS + HSTS sur tous les services
-- [ ] **RBAC** — définir les rôles SENSOR / OPERATOR / ADMIN avec accès différenciés
-
-### Priorité 2 — HIGH (à corriger avant déploiement)
-
-- [ ] **CORS restrictif** — remplacer `*` par la liste des origines autorisées
-- [ ] **Rate Limiting** — `express-rate-limit` (Node.js) + `django-ratelimit` (Django)
-- [ ] **Headers de sécurité** — installer `helmet` + configurer CSP, X-Frame-Options
-- [ ] **NGINX reverse proxy** — `limit_req_zone` + connexion TLS centralisée
-
-### Priorité 3 — MEDIUM
-
-- [ ] Supprimer le header `X-Powered-By`
-- [ ] Activer `X-Content-Type-Options: nosniff`
-- [ ] Configurer `Content-Security-Policy` explicite
-- [ ] Désactiver `DEBUG=True` en production (Django)
+**Score agrégé : 8.5 / 10 — HIGH TO CRITICAL**
 
 ---
 
-## 📁 Livrables
+## Recommandations
 
-```
-Attaque/
-├── README.md                          ← Ce fichier
-└── report_redteam_final_vf.pdf        ← Rapport complet Red Team (confidentiel)
-```
+**Priorité immédiate :**
+- Implémenter JWT sur tous les endpoints Node.js et Flask
+- Déployer HTTPS avec certificat TLS valide sur tous les services
+- Configurer RBAC avec les rôles SENSOR / OPERATOR / ADMIN
 
-| Livrable | Description | Statut |
-|----------|-------------|--------|
-| `README.md` | Documentation Red Team — ce fichier | ✅ Livré |
-| `report_redteam_final_vf.pdf` | Rapport complet avec screenshots et preuves | ✅ Livré |
-
----
-
-## ⚖️ Avertissement légal
-
-> Les tests décrits dans ce document ont été réalisés dans le cadre exclusif du **SIBD Projet 2025-2026** de l'ENSIAS Taroudant, sur des environnements de développement locaux, avec autorisation explicite. Toute reproduction de ces techniques sur des systèmes réels sans autorisation est illégale.
+**Avant déploiement :**
+- Remplacer `Access-Control-Allow-Origin: *` par la liste des origines autorisées
+- Intégrer `express-rate-limit` (Node.js) et `django-ratelimit` (Django)
+- Installer `helmet` pour les headers de sécurité HTTP
+- Déployer NGINX comme reverse proxy avec limitation de connexions
 
 ---
 
-<div align="center">
+## Livrables
 
-**Red Team — Agadir Tsunami-Ready**
-SIBD Projet 2025-2026 | ENSIAS Taroudant | Pr. Sara El-Ateif
+| Fichier | Description |
+|---|---|
+| `README.md` | Ce fichier — synthèse de l'évaluation Red Team |
+| `report_redteam_final_vf.pdf` | Rapport complet avec captures d'écran et preuves |
 
-*Assessment Date : 13 Avril 2026*
+---
 
-</div>
+*SIBD Projet 2025-2026 — ENSIAS Taroudant — Pr. Sara El-Ateif*
+*Évaluation réalisée le 13 Avril 2026*
