@@ -51,14 +51,14 @@
 
 Ce projet inclut un **audit de sécurité complet** avec correction des vulnérabilités suivantes :
 
-| ID | Vulnérabilité | Score DREAD | Statut |
-|----|--------------|-------------|--------|
-| V-01 | SQL Injection | 8.4 | ✅ Corrigé |
-| V-02 | Man-in-the-Middle (MITM) | 6.8 | ✅ Corrigé |
-| V-03 | Absence de contrôle d'accès (RBAC) | 7.0 | ✅ Corrigé |
-| V-04 | Déni de Service (DoS) | 8.2 | ✅ Corrigé |
-| V-05 | Falsification des signaux d'alerte | 8.4 | ✅ Corrigé |
-| V-06 | Données capteurs aberrantes | 7.2 | ✅ Corrigé |
+| ID | Vulnérabilité | Statut |
+|----|--------------|--------|
+| V-01 | SQL Injection | ✅ Corrigé |
+| V-02 | Man-in-the-Middle (MITM) | ✅ Corrigé |
+| V-03 | Absence de contrôle d'accès (RBAC) | ✅ Corrigé |
+| V-04 | Déni de Service (DoS) | ✅ Corrigé |
+| V-05 | Falsification des signaux d'alerte | ✅ Corrigé |
+| V-06 | Données capteurs aberrantes | ✅ Corrigé |
 
 ### Mesures de sécurité implémentées
 
