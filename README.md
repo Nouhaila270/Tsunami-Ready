@@ -207,8 +207,4 @@ Les contributions sont ce qui font de la communauté open-source un endroit incr
 
 Découvrez le fonctionnement du système d'alerte Tsunami-Ready en action :
 
-<video width="100%" controls>
-  <source src="Demo_video.mp4" type="video/mp4">
-  Votre navigateur ne supporte pas la lecture vidéo. 
-  <a href="Demo_video.mp4">Téléchargez la vidéo ici</a>.
-</video>
+[▶️ Regarder la vidéo (fichier MP4)](Demo_video.mp4)
