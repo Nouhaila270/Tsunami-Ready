@@ -2,15 +2,15 @@
 - MOHHI AYA
 - MIFTAH NOUHAILA
       
-Blue Team:
-      ABELLAH M’RAK
-      IKRAM MOURABIT
+**Blue Team:**
+ - ABELLAH M’RAK
+ - IKRAM MOURABIT
 
-QA Engineers:
+**QA Engineers:**
      Najy Omar
      Aya Negry
      
-Architects :
+**Architects :**
       LAMRANI ALAOUI Houda,
       Latlassi Abdelmaoula,
       MAZZINE Omar
