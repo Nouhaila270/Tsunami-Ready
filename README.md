@@ -22,6 +22,7 @@
 - [🔐 Audit de sécurité (Red Team)](#-audit-de-sécurité-red-team)
 - [🛡️ Mesures de sécurisation (Blue Team)](#️-mesures-de-sécurisation-blue-team)
 - [🤝 Contribution](#-contribution)
+- [🤝Vidéo de démonstration](#-Vidéo-de-démonstration)
 
 ---
 
@@ -203,7 +204,7 @@ Les contributions sont ce qui font de la communauté open-source un endroit incr
 - Signalez des bugs ou proposez des fonctionnalités via les **"issues"** GitHub.
 - Consultez les **"pull requests"** existantes avant d'en ouvrir une nouvelle.
 
-## 🎥 Vidéo de démonstration
+##  Vidéo de démonstration
 
 Découvrez le fonctionnement du système d'alerte Tsunami-Ready en action :
 
