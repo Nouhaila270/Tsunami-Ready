@@ -7,13 +7,13 @@
  - IKRAM MOURABIT
 
 **QA Engineers:**
-     Najy Omar
-     Aya Negry
+ - Najy Omar
+ - Aya Negry
      
 **Architects :**
-      LAMRANI ALAOUI Houda,
-      Latlassi Abdelmaoula,
-      MAZZINE Omar
+ - LAMRANI ALAOUI Houda,
+ - Latlassi Abdelmaoula,
+ - MAZZINE Omar
       
 **Équipe Augmenteds :**  
 - MERIZAK Yousra  
