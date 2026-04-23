@@ -217,7 +217,7 @@ Tsunami-Ready/
 
 **Module :** Systèmes d'Information et Bases de Données (SIBD)
 
-**Filière :** Ingénierie des Technologies et Confiance Numérique (SITCN)
+**Filière :** Sécurité IT et Confiance Numérique (SITCN)
 
 **École :** École Nationale Supérieure de l'Intelligence Artificielle et Sciences des Données — Taroudant (ENSIASD)
 
