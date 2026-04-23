@@ -210,8 +210,8 @@ Tsunami-Ready/
 
 | Nom | Rôle |
 |-----|------|
-| **ABELLAH M'RAK** | Développeur Backend & Sécurité (Blue Team) |
-| **IKRAM MOURABIT** | Développeur Backend & Sécurité (Blue Team) |
+| **ABELLAH M'RAK** |Sécurité (Blue Team) |
+| **IKRAM MOURABIT** |Sécurité (Blue Team) |
 
 **Encadré par :** Pr. Sara EL-ATEIF
 
