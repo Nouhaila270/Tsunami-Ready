@@ -55,36 +55,26 @@ Conscient de la criticité du système (vies humaines en jeu), le projet intègr
 Ce projet a été réalisé par une équipe aux compétences complémentaires, reflétant les enjeux de développement, de test et de sécurité d'un SI critique.
 
 ### Red Team (Attaque)
-| Rôle |
-| :--- |
-| MOHHI Aya |
-| MIFTAH Nouhaila |
+*   MOHHI Aya 
+*   MIFTAH Nouhaila 
 
 ### Blue Team (Défense)
-| Rôle |
-| :--- |
-| ABELLAH M'RAK |
-| IKRAM MOURABIT |
+*   ABELLAH M'RAK 
+*   IKRAM MOURABIT 
 
 ### QA Engineers (Tests)
-| Rôle |
-| :--- |
-| Najy Omar |
-| Aya Negry |
+*   Najy Omar 
+*   Aya Negry 
 
 ### Architects (Manuel)
-| Rôle |
-| :--- |
-| LAMRANI ALAOUI Houda |
-| Latlassi Abdelmaoula |
-| MAZZINE Omar |
+*   LAMRANI ALAOUI Houda 
+*   Latlassi Abdelmaoula 
+*   MAZZINE Omar 
 
 ### Equipe Augmenteds (IA)
-| Rôle |
-| :--- |
-| MERIZAK Yousra |
-| MEZOUARA Hassna |
-| MOUHADDAB Oumaima |
+*   MERIZAK Yousra 
+*   MEZOUARA Hassna 
+*   MOUHADDAB Oumaima 
 
 ---
 
