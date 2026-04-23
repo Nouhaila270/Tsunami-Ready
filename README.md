@@ -2,31 +2,31 @@
 
 
 
-## 📝 Table des matières
+##  Table des matières
 
 - [À propos du projet Tsunami-Ready](#-à-propos-du-projet-tsunami-ready)
   - [Présentation](#présentation)
   - [Menaces & sécurité](#menaces--sécurité)
-- [👥 L'équipe](#-léquipe)
+- [ L'équipe](#-léquipe)
   - [Red Team (Attaque)](#red-team-attaque)
   - [Blue Team (Défense)](#blue-team-défense)
   - [QA Engineers (Tests)](#qa-engineers-tests)
   - [Architects (Manuel)](#architects-manuel)
   - [Equipe Augmenteds (IA)](#equipe-augmenteds-ia)
-- [🛠️ Technologies utilisées](#️-technologies-utilisées)
-- [🚀 Installation et démarrage](#-installation-et-démarrage)
-- [⚙️ Utilisation](#️-utilisation)
-- [📊 Résultats des tests](#-résultats-des-tests)
+- [ Technologies utilisées](#️-technologies-utilisées)
+- [ Installation et démarrage](#-installation-et-démarrage)
+- [ Utilisation](#️-utilisation)
+- [ Résultats des tests](#-résultats-des-tests)
   - [Version Augmenteds (IA)](#version-augmenteds-ia)
   - [Version Architects (Manuel)](#version-architects-manuel)
-- [🔐 Audit de sécurité (Red Team)](#-audit-de-sécurité-red-team)
-- [🛡️ Mesures de sécurisation (Blue Team)](#️-mesures-de-sécurisation-blue-team)
-- [🤝 Contribution](#-contribution)
-- [🤝Vidéo de démonstration](#-Vidéo-de-démonstration)
+- [ Audit de sécurité (Red Team)](#-audit-de-sécurité-red-team)
+- [ Mesures de sécurisation (Blue Team)](#️-mesures-de-sécurisation-blue-team)
+- [ Contribution](#-contribution)
+- [Vidéo de démonstration](#-Vidéo-de-démonstration)
 
 ---
 
-## 📖 À propos du projet Tsunami-Ready
+##  À propos du projet Tsunami-Ready
 
 ### Présentation
 
@@ -50,7 +50,7 @@ Conscient de la criticité du système (vies humaines en jeu), le projet intègr
 
 ---
 
-## 👥 L'équipe
+##  L'équipe
 
 Ce projet a été réalisé par une équipe aux compétences complémentaires, reflétant les enjeux de développement, de test et de sécurité d'un SI critique.
 
@@ -88,7 +88,7 @@ Ce projet a été réalisé par une équipe aux compétences complémentaires, r
 
 ---
 
-## 🛠️ Technologies utilisées
+##  Technologies utilisées
 
 | Catégorie | Technologies |
 | :--- | :--- |
@@ -101,7 +101,7 @@ Ce projet a été réalisé par une équipe aux compétences complémentaires, r
 
 ---
 
-## 🚀 Installation et démarrage
+##  Installation et démarrage
 
 ### Prérequis
 *   Git
